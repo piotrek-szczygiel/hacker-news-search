@@ -1,4 +1,5 @@
 mod story;
+
 use actix_web::{get, App, HttpResponse, HttpServer, Responder};
 use story::Story;
 
@@ -13,6 +14,8 @@ async fn index() -> impl Responder {
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
+    pretty_env_logger::init();
+
     HttpServer::new(|| App::new().service(index))
         .bind("127.0.0.1:3232")?
         .run()

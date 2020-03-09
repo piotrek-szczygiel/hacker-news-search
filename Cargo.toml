@@ -4,8 +4,6 @@ version = "0.1.0"
 authors = ["Piotr Szczygieł <szczygiel.p@gmail.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 actix-web = "2.0"
 actix-rt = "1.0"
@@ -13,3 +11,6 @@ futures = "0.3"
 lazy_static = "1.4.0"
 reqwest = { version = "0.10", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
+pretty_env_logger = "0.4.0"
+log = "0.4.8"
+
