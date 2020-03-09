@@ -1,9 +1,10 @@
 mod story;
 
-use actix_files::NamedFile;
-use actix_web::{get, web::Query, App, HttpResponse, HttpServer, Responder};
+use actix_files as fs;
+use actix_web::{get, web::Query, App, Error, HttpRequest, HttpResponse, HttpServer, Responder};
 use log::info;
 use serde::Deserialize;
+use std::path::PathBuf;
 use story::Story;
 
 #[derive(Deserialize, Debug)]
@@ -27,31 +28,22 @@ async fn stories(filter: Query<Filter>) -> impl Responder {
 
 #[get("/")]
 async fn index() -> impl Responder {
-    NamedFile::open("./static/index.html")
+    fs::NamedFile::open("./static/index.html")
 }
 
-#[get("/style.css")]
-async fn css() -> impl Responder {
-    NamedFile::open("./static/style.css")
-}
-
-#[get("/favicon.ico")]
-async fn favicon() -> impl Responder {
-    NamedFile::open("./static/favicon.ico")
+#[get("/{filename:.*}")]
+async fn files(req: HttpRequest) -> Result<fs::NamedFile, Error> {
+    let mut path = PathBuf::from("./static");
+    path.push(req.match_info().query("filename"));
+    Ok(fs::NamedFile::open(path)?)
 }
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     pretty_env_logger::init();
 
-    HttpServer::new(|| {
-        App::new()
-            .service(index)
-            .service(stories)
-            .service(css)
-            .service(favicon)
-    })
-    .bind("127.0.0.1:3232")?
-    .run()
-    .await
+    HttpServer::new(|| App::new().service(index).service(stories).service(files))
+        .bind("127.0.0.1:3232")?
+        .run()
+        .await
 }

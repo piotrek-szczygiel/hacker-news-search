@@ -1,3 +1,5 @@
+use chrono::serde::ts_seconds::deserialize as from_ts;
+use chrono::{DateTime, NaiveDateTime, Utc};
 use futures::future;
 use lazy_static::lazy_static;
 use log::info;
@@ -6,13 +8,27 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Mutex;
 
-#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(default)]
 pub struct Story {
     id: u64,
     pub title: String,
     pub score: i64,
     url: String,
+    #[serde(deserialize_with = "from_ts")]
+    time: DateTime<Utc>,
+}
+
+impl Default for Story {
+    fn default() -> Self {
+        Story {
+            id: 0,
+            title: "".into(),
+            score: 0,
+            url: "".into(),
+            time: DateTime::from_utc(NaiveDateTime::from_timestamp(0, 0), Utc),
+        }
+    }
 }
 
 impl Story {
