@@ -10,8 +10,8 @@ use std::sync::Mutex;
 #[serde(default)]
 pub struct Story {
     id: u64,
-    title: String,
-    score: i64,
+    pub title: String,
+    pub score: i64,
     url: String,
 }
 
