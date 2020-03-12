@@ -1,11 +1,17 @@
 mod story;
 
 use actix_files as fs;
-use actix_web::{get, web::Query, App, Error, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{get, web, App, Error, HttpRequest, HttpResponse, HttpServer, Responder};
 use log::info;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use story::Story;
+
+#[derive(Serialize)]
+struct QueryResult {
+    stories: Option<Vec<Story>>,
+    error: Option<String>,
+}
 
 #[derive(Deserialize, Debug)]
 struct Filter {
@@ -13,16 +19,24 @@ struct Filter {
 }
 
 #[get("/stories")]
-async fn stories(filter: Query<Filter>) -> impl Responder {
-    if let Ok(mut stories) = Story::fetch_new().await {
-        info!("Query: {:?}", &filter);
-        stories.sort_by(|a, b| b.score.cmp(&a.score));
-        if let Some(query) = &filter.query {
-            stories.retain(|s| s.title.to_lowercase().contains(&query.to_lowercase()));
+async fn stories(filter: web::Query<Filter>) -> impl Responder {
+    match Story::fetch_new().await {
+        Ok(mut stories) => {
+            info!("Query: {:?}", &filter);
+            stories.sort_by(|a, b| b.score.cmp(&a.score));
+            if let Some(query) = &filter.query {
+                stories.retain(|s| s.title.to_lowercase().contains(&query.to_lowercase()));
+            }
+
+            HttpResponse::Ok().json(QueryResult {
+                stories: Some(stories),
+                error: None,
+            })
         }
-        HttpResponse::Ok().body(format!("{:#?}", stories))
-    } else {
-        HttpResponse::InternalServerError().body("Error while processing the request!")
+        Err(error) => HttpResponse::Ok().json(QueryResult {
+            stories: None,
+            error: Some(format!("Error: {:#?}", error)),
+        }),
     }
 }
 
