@@ -57,7 +57,7 @@ async fn main() -> std::io::Result<()> {
     pretty_env_logger::init();
 
     HttpServer::new(|| App::new().service(index).service(stories).service(files))
-        .bind("127.0.0.1:3232")?
+        .bind("0.0.0.0:3232")?
         .run()
         .await
 }
