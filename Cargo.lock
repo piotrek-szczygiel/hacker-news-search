@@ -762,6 +762,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "hacker-news-search"
+version = "0.1.0"
+dependencies = [
+ "actix-files",
+ "actix-rt",
+ "actix-web",
+ "chrono",
+ "futures",
+ "lazy_static",
+ "log",
+ "pretty_env_logger",
+ "reqwest",
+ "serde",
+]
+
+[[package]]
 name = "heck"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1409,22 +1425,6 @@ checksum = "11834e137f3b14e309437a8276714eed3a80d1ef894869e510f2c0c0b98b9f4a"
 dependencies = [
  "hostname",
  "quick-error",
-]
-
-[[package]]
-name = "rest"
-version = "0.1.0"
-dependencies = [
- "actix-files",
- "actix-rt",
- "actix-web",
- "chrono",
- "futures",
- "lazy_static",
- "log",
- "pretty_env_logger",
- "reqwest",
- "serde",
 ]
 
 [[package]]

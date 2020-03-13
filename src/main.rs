@@ -56,8 +56,14 @@ async fn files(req: HttpRequest) -> Result<fs::NamedFile, Error> {
 async fn main() -> std::io::Result<()> {
     pretty_env_logger::init();
 
+    let port = std::env::var("PORT")
+        .unwrap_or_else(|_| "3000".to_string())
+        .parse()
+        .expect("PORT must be a number");
+
     HttpServer::new(|| App::new().service(index).service(stories).service(files))
-        .bind("0.0.0.0:3232")?
+        .bind(("0.0.0.0", port))
+        .expect(&format!("Can not bind to port {}", port))
         .run()
         .await
 }
