@@ -37,8 +37,11 @@ impl Story {
             static ref CLIENT: Client = Client::new();
         }
 
+        const STORIES_URL: &str = "https://hacker-news.firebaseio.com/v0/newstories.json";
+        info!("Fetching {}", STORIES_URL);
+
         let ids = CLIENT
-            .get("https://hacker-news.firebaseio.com/v0/newstories.json")
+            .get(STORIES_URL)
             .send()
             .await?
             .json::<Vec<u64>>()
@@ -62,8 +65,8 @@ impl Story {
             return Ok(story.clone());
         }
 
-        info!("Fetching story {}", id);
         let url = format!("https://hacker-news.firebaseio.com/v0/item/{}.json", id);
+        info!("Fetching {}", url);
         let story = CLIENT.get(&url).send().await?.json::<Story>().await;
         if let Ok(story) = story.as_ref().map(|s| s.clone()) {
             CACHE.lock().unwrap().insert(id, story);
