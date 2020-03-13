@@ -42,7 +42,7 @@ function search() {
             }
         })
         .catch((error) => {
-            setResults(`<div id="error">Error: ${error}</div>`)
+            setResults(`<div style="color: red">Error: ${error}</div>`)
         })
 }
 
