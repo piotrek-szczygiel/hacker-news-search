@@ -35,7 +35,13 @@ function search() {
                 let html = "<ul>"
                 for (const i in results.stories) {
                     const story = results.stories[i]
-                    html += `<li><a href="${story.url}">${story.title}</a>&nbsp; (${story.score})</li>`
+                    html += `
+                        <li>
+                            <span class="score">[${story.score}]</span>
+                            <a href="${story.url}">${story.title}</a>
+                            <div class="other">${new Date(story.time).toLocaleString()}</div>
+                        </li>
+                    `
                 }
                 html += "</ul>"
                 setResults(html)
